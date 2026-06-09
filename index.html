@@ -301,7 +301,7 @@
 <div class="page" id="page-q2">
   <div class="timeline" id="tl2"></div>
   <div class="q-content">
-    <p class="q-text">هل شجر الليمون يدوب علي ارضه؟</p>
+    <p class="q-text">هل شجر الليمون يدوب علي ارضه?</p>
     <div class="q-btns">
       <button class="btn-yes" onclick="goToQ(3)">ايوووووة</button>
       <button class="btn-no" id="btn-q2-no" onclick="handleNo(this, 'q2')">No</button>
@@ -349,7 +349,7 @@
   </div>
   <div class="final-block">
     <p class="final-label">🎬 الفيديو</p>
-    <video id="final-video" controls playsinline webkit-playsinline src="./assets/video2.mp4"></video>
+    <video id="final-video" controls playsinline webkit-playsinline src="https://res.cloudinary.com/dlxm8rg0u/video/upload/q_auto/video2_gza24i.mp4"></video>
   </div>
 </div>
 
@@ -451,19 +451,16 @@
 
   // ── Home sequence ──
   function startHomeSequence() {
-    // إخفاء زر البدء بمجرد الضغط عليه
     const placeholder = document.getElementById('home-placeholder');
     if (placeholder) placeholder.style.display = 'none';
 
     const audio = document.getElementById('home-audio');
     
-    // الآن بعد ضغطة المستخدم، المتصفح سيسمح بالصوت الكامل 100%
     audio.play()
       .then(() => {
         audio.onended = playHomeVideo;
       })
       .catch(() => { 
-        // في حال حدوث أي خطأ غير متوقع، ننتقل للفيديو مباشرة
         playHomeVideo(); 
       });
   }
@@ -471,16 +468,16 @@
   function playHomeVideo() {
     if (currentPage !== 'home' && currentPage !== 'page-home') return;
     const video = document.getElementById('home-video');
-    video.src = './assets/video1.mp4';
+    
+    // هنا تم تغيير مسار الفيديو الأول (video1) لرابط Cloudinary المباشر والمحسّن تلقائياً
+    video.src = 'https://res.cloudinary.com/dlxm8rg0u/video/upload/q_auto/video1_oizdpm.mp4';
     video.style.display = 'block';
     
     const placeholder = document.getElementById('home-placeholder');
     if (placeholder) placeholder.style.display = 'none';
     
-    // تم إلغاء كتم الصوت (video.muted = false) لأن المستخدم تفاعل بالفعل مع الصفحة
     video.muted = false; 
     video.play().catch(() => {
-      // احتياطياً إذا اعترض المتصفح نقوم بكتمه ليعمل بأي شكل
       video.muted = true;
       video.play().catch(() => {});
     });
