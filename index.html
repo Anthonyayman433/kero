@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>تخرج البح</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0a0a0f;
+    --surface: #13131a;
+    --border: #2a2a3a;
+    --accent: #7c5cfc;
+    --accent2: #c084fc;
+    --text: #f0eeff;
+    --muted: #8880a8;
+    --yes: #22c55e;
+    --no: #f43f5e;
+    --radius: 14px;
+    --font: 'Segoe UI', 'Cairo', Tahoma, Arial, sans-serif;
+  }
+
+  html, body {
+    height: 100%;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font);
+    direction: rtl;
+  }
+
+  /* ── HEADER ── */
+  #site-header {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    height: 60px;
+    background: rgba(10,10,15,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+  }
+  #logo-link {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    cursor: pointer;
+  }
+  #logo-link img {
+    height: 38px;
+    width: auto;
+    object-fit: contain;
+  }
+  #logo-link .logo-fallback {
+    font-size: 1.3rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: 0.04em;
+  }
+
+  /* ── PAGES ── */
+  .page {
+    display: none;
+    min-height: 100vh;
+    padding-top: 60px;
+  }
+  .page.active { display: flex; flex-direction: column; align-items: center; }
+
+  /* ── HOME PAGE ── */
+  #page-home {
+    justify-content: center;
+    gap: 28px;
+    padding: 80px 20px 40px;
+  }
+  #home-media {
+    width: 100%;
+    max-width: 720px;
+    border-radius: var(--radius);
+    overflow: hidden;
+    background: #13131a;
+    aspect-ratio: 16/9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--border);
+  }
+  #home-video {
+    width: 100%;
+    height: 100%;
+    display: none;
+    object-fit: contain;
+    background: #000;
+    border-radius: var(--radius);
+  }
+  #home-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    color: var(--text);
+    font-size: 1.1rem;
+    cursor: pointer;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    padding: 14px 28px;
+    border-radius: 40px;
+    font-weight: bold;
+    box-shadow: 0 4px 15px rgba(124, 92, 252, 0.4);
+    transition: transform 0.2s;
+  }
+  #home-placeholder:active { transform: scale(0.95); }
+  
+  #btn-continue {
+    padding: 14px 48px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    color: #fff;
+    border: none;
+    border-radius: 40px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    cursor: pointer;
+    letter-spacing: 0.06em;
+    transition: opacity .2s, transform .15s;
+    font-family: var(--font);
+  }
+  #btn-continue:active { transform: scale(0.96); opacity: 0.85; }
+
+  /* ── TIMELINE ── */
+  .timeline {
+    width: 100%;
+    max-width: 600px;
+    margin: 28px auto 0;
+    padding: 0 20px;
+  }
+  .tl-labels {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    font-size: 0.82rem;
+    color: var(--muted);
+  }
+  .tl-track {
+    height: 6px;
+    background: var(--border);
+    border-radius: 99px;
+    overflow: hidden;
+  }
+  .tl-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    border-radius: 99px;
+    transition: width 0.45s ease;
+  }
+  .tl-dots {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+  }
+  .tl-dot {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    background: var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--muted);
+    transition: background 0.3s, color 0.3s;
+    flex-shrink: 0;
+  }
+  .tl-dot.done { background: var(--accent); color: #fff; }
+  .tl-dot.current { background: var(--accent2); color: #fff; box-shadow: 0 0 0 3px rgba(192,132,252,0.3); }
+
+  /* ── QUESTION PAGES ── */
+  .q-page {
+    padding: 20px 20px 60px;
+    align-items: center;
+    gap: 0;
+  }
+  .q-content {
+    width: 100%;
+    max-width: 560px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 28px;
+    margin-top: 28px;
+  }
+  .q-photo {
+    width: 100%;
+    max-height: 320px;
+    object-fit: cover;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+  }
+  .q-text {
+    font-size: clamp(1.2rem, 4vw, 1.6rem);
+    font-weight: 700;
+    text-align: center;
+    line-height: 1.5;
+    color: var(--text);
+  }
+  .q-btns {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    justify-content: center;
+    width: 100%;
+  }
+  .btn-yes, .btn-no, .btn-opt {
+    padding: 13px 38px;
+    border: none;
+    border-radius: 40px;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform .15s, opacity .15s;
+    font-family: var(--font);
+    min-width: 120px;
+  }
+  .btn-yes { background: var(--yes); color: #fff; }
+  .btn-no  { background: var(--no);  color: #fff; position: relative; }
+  .btn-opt { background: var(--surface); color: var(--text); border: 1px solid var(--border); }
+  .btn-yes:active, .btn-no:active, .btn-opt:active { transform: scale(0.95); opacity: 0.85; }
+
+  /* ── FINAL PAGE ── */
+  #page-final {
+    padding: 28px 20px 60px;
+    gap: 32px;
+    align-items: center;
+  }
+  .final-block {
+    width: 100%;
+    max-width: 680px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .final-label {
+    font-size: 0.85rem;
+    color: var(--muted);
+    text-align: center;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  #final-audio {
+    width: 100%;
+    border-radius: 40px;
+    accent-color: var(--accent);
+  }
+  #final-video {
+    width: 100%;
+    border-radius: var(--radius);
+    background: #000;
+    max-height: 420px;
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 480px) {
+    .btn-yes, .btn-no, .btn-opt { padding: 12px 24px; font-size: 0.95rem; min-width: 100px; }
+    .q-text { font-size: 1.15rem; }
+    #btn-continue { padding: 13px 36px; font-size: 1rem; }
+  }
+</style>
+</head>
+<body>
+
+<header id="site-header">
+  <a id="logo-link" onclick="goHome(); return false;" href="#">
+    <img src="./assets/logo.png" alt="Logo" id="logo-img" onerror="this.style.display='none'; document.getElementById('logo-text').style.display='block';" />
+    <span class="logo-fallback" id="logo-text" style="display:none;">🎓 تخرج البح</span>
+  </a>
+</header>
+
+<div class="page active" id="page-home">
+  <div id="home-media">
+    <div id="home-placeholder" onclick="startHomeSequence()">
+      <span>اضغط لبدء العرض 🔊</span>
+    </div>
+    <video id="home-video" playsinline webkit-playsinline></video>
+  </div>
+  <audio id="home-audio" src="./assets/sound1.mp3"></audio>
+  <button id="btn-continue" onclick="goToQ(1)">Continue</button>
+</div>
+
+<div class="page" id="page-q1">
+  <div class="timeline" id="tl1"></div>
+  <div class="q-content">
+    <img class="q-photo" src="./assets/photo1.jpeg" alt="" onerror="this.style.display='none'" />
+    <p class="q-text">هل انت قموررررريييي؟</p>
+    <div class="q-btns">
+      <button class="btn-yes" onclick="goToQ(2)">ايوووووة</button>
+      <button class="btn-no" id="btn-q1-no" onclick="handleNo(this, 'q1')">No</button>
+    </div>
+  </div>
+  <audio id="sound2" src="./assets/sound2.mp3"></audio>
+</div>
+
+<div class="page" id="page-q2">
+  <div class="timeline" id="tl2"></div>
+  <div class="q-content">
+    <p class="q-text">هل شجر الليمون يدوب علي ارضه؟</p>
+    <div class="q-btns">
+      <button class="btn-yes" onclick="goToQ(3)">ايوووووة</button>
+      <button class="btn-no" id="btn-q2-no" onclick="handleNo(this, 'q2')">No</button>
+    </div>
+  </div>
+</div>
+
+<div class="page" id="page-q3">
+  <div class="timeline" id="tl3"></div>
+  <div class="q-content">
+    <p class="q-text">هل روووح كمافينجا؟</p>
+    <div class="q-btns">
+      <button class="btn-yes" onclick="goToQ(4)">ايوووووة</button>
+      <button class="btn-no" id="btn-q3-no" onclick="handleNo(this, 'q3')">No</button>
+    </div>
+  </div>
+</div>
+
+<div class="page" id="page-q4">
+  <div class="timeline" id="tl4"></div>
+  <div class="q-content">
+    <p class="q-text">الصابونة فين؟</p>
+    <div class="q-btns">
+      <button class="btn-opt" onclick="goToQ(5)">في الحمام</button>
+      <button class="btn-opt" id="btn-q4-no" onclick="handleQ4No(this)">مش في الحمام</button>
+    </div>
+  </div>
+</div>
+
+<div class="page" id="page-q5">
+  <div class="timeline" id="tl5"></div>
+  <div class="q-content">
+    <p class="q-text">خلصت ليالييينا سوااا؟</p>
+    <div class="q-btns">
+      <button class="btn-yes" onclick="goToFinal()">ايووووة</button>
+      <button class="btn-no" id="btn-q5-no" onclick="handleNo(this, 'q5')">No</button>
+    </div>
+  </div>
+</div>
+
+<div class="page" id="page-final">
+  <div class="final-block">
+    <p class="final-label">🎵 الأغنية</p>
+    <audio id="final-audio" controls src="./assets/sound3.mp3"></audio>
+  </div>
+  <div class="final-block">
+    <p class="final-label">🎬 الفيديو</p>
+    <video id="final-video" controls playsinline webkit-playsinline src="./assets/video2.mp4"></video>
+  </div>
+</div>
+
+<script>
+  // ── State ──
+  const noClicks = { q1: 0, q2: 0, q3: 0, q5: 0 };
+  let currentPage = 'home';
+
+  // ── Shared "No" button handler (Q1, Q2, Q3, Q5) ──
+  function handleNo(btn, key) {
+    noClicks[key]++;
+    const n = noClicks[key];
+    if (n === 1 || n === 2) {
+      const angle = Math.random() * 2 * Math.PI;
+      const dist = 80 + Math.random() * 80;
+      btn.style.position = 'relative';
+      btn.style.transform = `translate(${Math.cos(angle) * dist}px, ${Math.sin(angle) * dist}px)`;
+    } else if (n === 3) {
+      document.getElementById('sound2').play().catch(() => {});
+    } else if (n >= 4) {
+      btn.textContent = 'دوس علي yes يا علق';
+    }
+  }
+
+  // ── Q4 No button (unique behaviour) ──
+  function handleQ4No(btn) {
+    btn.textContent = 'هاع صح في طيزك';
+  }
+
+  // ── Navigation ──
+  function showPage(id) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    window.scrollTo(0, 0);
+    currentPage = id;
+  }
+
+  function goHome() {
+    stopAll();
+    ['q1', 'q2', 'q3', 'q5'].forEach(key => {
+      noClicks[key] = 0;
+      const btn = document.getElementById('btn-' + key + '-no');
+      if (btn) {
+        btn.style.position = '';
+        btn.style.transform = '';
+        btn.textContent = 'No';
+      }
+    });
+    document.getElementById('btn-q4-no').textContent = 'مش في الحمام';
+    showPage('page-home');
+  }
+
+  function goToQ(n) {
+    stopAll();
+    renderTimeline(n);
+    showPage('page-q' + n);
+  }
+
+  function goToFinal() {
+    stopAll();
+    showPage('page-final');
+  }
+
+  function stopAll() {
+    ['home-audio', 'sound2', 'final-audio'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) { el.pause(); el.currentTime = 0; }
+    });
+    const hv = document.getElementById('home-video');
+    if (hv) { hv.pause(); hv.currentTime = 0; hv.style.display = 'none'; }
+    const hp = document.getElementById('home-placeholder');
+    if (hp) hp.style.display = 'flex';
+    const fv = document.getElementById('final-video');
+    if (fv) { fv.pause(); fv.currentTime = 0; }
+  }
+
+  // ── Timeline ──
+  function renderTimeline(current) {
+    const total = 5;
+    const pct = ((current - 1) / (total - 1)) * 100;
+    const html = `
+      <div class="tl-labels">
+        <span>سؤال ${current} من ${total}</span>
+        <span>${Math.round(pct)}%</span>
+      </div>
+      <div class="tl-track"><div class="tl-fill" style="width:${pct}%"></div></div>
+      <div class="tl-dots">
+        ${Array.from({length: total}, (_, i) => {
+          const n = i + 1;
+          const cls = n < current ? 'done' : n === current ? 'current' : '';
+          return `<div class="tl-dot ${cls}">${n}</div>`;
+        }).join('')}
+      </div>`;
+    ['tl1','tl2','tl3','tl4','tl5'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.innerHTML = html;
+    });
+  }
+
+  // ── Home sequence ──
+  function startHomeSequence() {
+    // إخفاء زر البدء بمجرد الضغط عليه
+    const placeholder = document.getElementById('home-placeholder');
+    if (placeholder) placeholder.style.display = 'none';
+
+    const audio = document.getElementById('home-audio');
+    
+    // الآن بعد ضغطة المستخدم، المتصفح سيسمح بالصوت الكامل 100%
+    audio.play()
+      .then(() => {
+        audio.onended = playHomeVideo;
+      })
+      .catch(() => { 
+        // في حال حدوث أي خطأ غير متوقع، ننتقل للفيديو مباشرة
+        playHomeVideo(); 
+      });
+  }
+
+  function playHomeVideo() {
+    if (currentPage !== 'home' && currentPage !== 'page-home') return;
+    const video = document.getElementById('home-video');
+    video.src = './assets/video1.mp4';
+    video.style.display = 'block';
+    
+    const placeholder = document.getElementById('home-placeholder');
+    if (placeholder) placeholder.style.display = 'none';
+    
+    // تم إلغاء كتم الصوت (video.muted = false) لأن المستخدم تفاعل بالفعل مع الصفحة
+    video.muted = false; 
+    video.play().catch(() => {
+      // احتياطياً إذا اعترض المتصفح نقوم بكتمه ليعمل بأي شكل
+      video.muted = true;
+      video.play().catch(() => {});
+    });
+  }
+</script>
+</body>
+</html>
